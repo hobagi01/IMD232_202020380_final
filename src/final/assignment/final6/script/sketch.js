@@ -1,6 +1,7 @@
 // 사용자 조절 가능한 매개변수
 let amplitudeSlider, speedSlider, colorSlider;
 let song, fft;
+let playButton;
 
 function preload() {
   // 음악 파일 로드
@@ -20,20 +21,22 @@ function setup() {
   let sliderX = 20;
   let sliderY = height - 120;
   amplitudeSlider.position(sliderX, sliderY);
-  createP('Amplitude (진폭)').position(sliderX + 160, sliderY);
+  createP('Amplitude (진폭)').position(sliderX + 160, sliderY - 15);
 
   speedSlider.position(sliderX, sliderY + 40);
-  createP('Speed (속도)').position(sliderX + 160, sliderY + 40);
+  createP('Speed (속도)').position(sliderX + 160, sliderY + 25);
 
   colorSlider.position(sliderX, sliderY + 80);
-  createP('Base Color (기본 색상)').position(sliderX + 160, sliderY + 80);
+  createP('Brightness (밝기)').position(sliderX + 160, sliderY + 65);
+
+  // 음악 재생 버튼 초기화
+  playButton = createButton('MUSIC PLAY!');
+  playButton.position(windowWidth / 2 - 50, 20); // 위쪽 가운데로 이동
+  playButton.mousePressed(togglePlay);
 
   // FFT 객체 초기화
   fft = new p5.FFT();
   fft.setInput(song);
-
-  // 음악 재생
-  song.play();
 }
 
 function windowResized() {
@@ -44,6 +47,9 @@ function windowResized() {
   amplitudeSlider.position(sliderX, sliderY);
   speedSlider.position(sliderX, sliderY + 40);
   colorSlider.position(sliderX, sliderY + 80);
+
+  // 음악 재생 버튼 위치 다시 설정
+  playButton.position(windowWidth / 2 - 50, 50);
 
   // 슬라이더 제목 위치 다시 설정
   select('p').position(sliderX + 160, sliderY);
@@ -91,9 +97,20 @@ function draw() {
 
       push();
       translate(x, y, z);
-      fill(r, g, b, 150); // Use the color variables for each sphere
+      fill(r, g, b, brightnessValue); // Use the color variables and slider value for each sphere
       sphere(8 * sizeFactor); // Draw spheres instead of vertices
       pop();
     }
+  }
+}
+
+// 음악 재생/일시 중지 토글 함수
+function togglePlay() {
+  if (song.isPlaying()) {
+    song.pause();
+    playButton.html('MUSIC PLAY!');
+  } else {
+    song.play();
+    playButton.html('STOP!!');
   }
 }
